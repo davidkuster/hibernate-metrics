@@ -1,0 +1,51 @@
+
+/* performance metrics */
+#metrics {
+    color: #fff;
+    background-color: #A52A2A; /* #A0522D; */
+    margin: 0;
+    padding: 20px;
+    width: 100%;
+    font-size: 1em;
+    line-height: 1em;
+}
+
+#clearStatsLink,
+#refreshMetricsLink {
+    padding-left: 10px;
+}
+
+.metricsWarning {
+    color: red;
+    font-weight: bold;
+}
+
+.metricsAttention {
+    color: yellow;
+    font-weight: bold;
+}
+
+.metricsUnit {
+    white-space: nowrap;
+    padding-left: 15px;
+    display: inline;
+}
+
+.metricsSection {
+    padding-bottom:5px;
+}
+
+.metricsLink {
+    text-decoration: none;
+    color: #00fafa;
+}
+
+/*.metricsLink .metricsTitle {
+    display:none;
+}
+.metricsLink:hover .metricsTitle {
+    display:block;
+    position:absolute;
+    background-color: white;
+    color: black;
+}*/
