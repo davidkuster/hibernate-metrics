@@ -52,3 +52,9 @@ This can also be used with these additional tags, to control where the metrics a
     <hibernateMetrics:isEnabled>
         <hibernateMetrics:metrics/>
     </hibernateMetrics:isEnabled>
+
+
+Details about metrics output:
+ - Collections/Entities
+   - fetch = loaded from DB
+   - load = loaded from DB or cache
