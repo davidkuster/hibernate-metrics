@@ -17,7 +17,12 @@ class SqlFormatter {
   }
 
   static String format(String query) {
-    getFormatter().format(query)
+    if ( query )
+      getFormatter().format(query)
+  }
+
+  static String formatForHtml(String query) {
+    format(query)?.replaceAll('\n','<br>')
   }
 
 }
