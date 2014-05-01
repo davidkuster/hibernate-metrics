@@ -4,13 +4,13 @@
 
     <div class="metricsSection">
         Before/After AJAX calls:
-        <a id="clearStatsLink" class="metricsLink">Clear Metrics</a>
-        <a id="refreshMetricsLink" class="metricsLink">Refresh Metrics</a>
+        <span id="clearStatsLink" class="metricsLink">Clear Metrics</span>
+        <span id="refreshMetricsLink" class="metricsLink">Refresh Metrics</span>
     </div>
 
 	<g:each var="section" in="${session.metrics}">
 
-		<div class="metricsSection">
+		<div class="metricsSection metricsData">
 
 			<u>${section.key}</u>
 

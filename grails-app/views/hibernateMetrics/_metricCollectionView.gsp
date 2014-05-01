@@ -26,8 +26,11 @@
 	<span class="metricsLink" id="${linkName}" title="${output.join(' \n')}">Results (${value.size()})</span>
 
 
-	<div id="${divName}" style="display:none">
-		${output?.join('<br><br>')}
+	<div id="${divName}" style="display:none; max-height:500px;">
+		<g:each in="${output}">
+			${it}
+			<br><br>
+		</g:each>
 	</div>
 
 

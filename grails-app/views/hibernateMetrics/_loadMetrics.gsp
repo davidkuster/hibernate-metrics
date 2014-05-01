@@ -30,12 +30,14 @@
     function clearStats() {
         $.ajax({
             url: "${g.createLink(controller:'hibernateMetrics', action:'ajaxClearStats')}",
-            type: "POST",
+            type: "GET",
             success: function(data) {
                 //$("#metrics").html( data );
+                $(".metricsData").html("");
             },
             error: function(data) {
-                $("#metrics").html( "Failed to clear metrics data: " + data );
+                //$("#metrics").html( "Failed to clear metrics data: " + data );
+                $(".metricsData").html("");
             },
             dataType: "json",
             async: true
