@@ -1,13 +1,16 @@
 <script type='text/javascript'>
     $(document).ready( function() {
-        /*if ( $().jquery >= 1.7 ) {
+
+        console.log( "jquery version = " + $().jquery );
+
+        if ( $().jquery == "1.8.3" ) {
             $("#clearStatsLink").on( 'click', function() { clearStats(); } );
             $("#refreshMetricsLink").on( 'click', function() { getMetrics(); } );
         }
-        else {*/
+        else {
             $("#clearStatsLink").live( 'click', function() { clearStats(); } );
             $("#refreshMetricsLink").live( 'click', function() { getMetrics(1); } );
-        //}
+        }
 
         getMetrics(0);
     });

@@ -36,6 +36,8 @@ grails.project.dependency.resolution = {
             export = false
         }
 
-        runtime ":jquery:1.7.1"
+        runtime( ":jquery:1.7.1" ) {
+            export = false
+        }
     }
 }
