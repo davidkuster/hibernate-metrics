@@ -14,9 +14,9 @@ class HibernateMetricsService {
 
     def config = Holders.config
 
-    boolean enabled = config.grails.plugins.hibernateMetrics.enabled
-    def excludeActions = config.grails.plugins.hibernateMetrics.excludeActions
-    def logToConsole = config.grails.plugins.hibernateMetrics.logSqlToConsole
+    boolean enabled = config.grails.plugins.hibernateMetrics.enabled ?: false
+    boolean logToConsole = config.grails.plugins.hibernateMetrics.logSqlToConsole ?: true
+    def excludeActions = [ 'hibernateMetrics':['*'] ] << config.grails.plugins.hibernateMetrics.excludeActions
 
     def initialized
 
@@ -139,13 +139,13 @@ class HibernateMetricsService {
     }
 
 
-    // read entity stats out of the overall hibernate stats obj
-    def getCollectionStats( stats ) {
+    // read collection stats out of the overall hibernate stats obj
+    private def getCollectionStats( stats ) {
         def collections = stats.collectionRoleNames
         def map = [:]
 
-        collections?.each { entity ->
-            def collectionStats = stats.getCollectionStatistics( entity )
+        collections?.each { collection ->
+            def collectionStats = stats.getCollectionStatistics( collection )
             def statList = []
 
             def deleteCount = collectionStats.removeCount
@@ -159,10 +159,9 @@ class HibernateMetricsService {
             if ( insertCount ) statList << "Recreated: $insertCount"
             if ( loadCount ) statList << "Load: $loadCount"
             if ( updateCount ) statList << "Update: $updateCount"
-            // not including optimisticFailureCount for now
 
-            if ( statList.size() > 0 )
-                map.put( entity, statList.flatten() )
+            if ( statList )
+                map.put( collection, statList.flatten() )
         }
 
         map.sort()
@@ -170,7 +169,7 @@ class HibernateMetricsService {
 
 
     // read entity stats out of the overall hibernate stats obj
-    def getEntityStats( stats ) {
+    private def getEntityStats( stats ) {
         def entities = stats.entityNames
         def map = [:]
 
@@ -191,7 +190,7 @@ class HibernateMetricsService {
             if ( updateCount ) statList << "Update: $updateCount"
             // not including optimisticFailureCount for now
 
-            if ( statList.size() > 0 )
+            if ( statList )
                 map.put( entity, statList.flatten() )
         }
 
@@ -200,7 +199,7 @@ class HibernateMetricsService {
 
 
     // read query stats out of the overall hibernate stats obj
-    def getQueryStats( stats ) {
+    private def getQueryStats( stats ) {
         def queries = stats.queries
         def map = [:]
 
@@ -227,7 +226,7 @@ class HibernateMetricsService {
             if ( executionCount && executionAvgTime )
                 statList.put( "(Avg*Count)", executionCount * executionAvgTime )
 
-            if ( statList.size() > 0 )
+            if ( statList )
                 map.put( query, statList )
         }
 
@@ -247,8 +246,12 @@ class HibernateMetricsService {
     }
 
     private def getSlowestQuery( stats ) {
-        [ (SqlFormatter.format(stats.queryExecutionMaxTimeQueryString)) :
-            ["Execution Time: ${stats.queryExecutionMaxTime}ms"] ]
+        def slowestQuery = stats.queryExecutionMaxTimeQueryString
+        if ( slowestQuery ) {
+            [ (SqlFormatter.format(slowestQuery)) :
+                ["Execution Time: ${stats.queryExecutionMaxTime}ms"] ]
+        }
+        else ''
     }
 
 }

@@ -28,9 +28,9 @@ log4j = {
 
 
 grails.plugins.hibernateMetrics.excludeActions = [
-    // either controllerName or actionName can be replaced with '*'
-    // 'controllerName':['actionName', 'action2', 'etc']
-    'hibernateMetrics':['*']
+    // either controllerName or actionNames can be replaced with '*'
+    // 'controllerName':['actionName', 'action2', 'etc'],
+    // 'otherController':['otherAction', 'otherAction2', 'etc']
 ]
 
 // turned on by default
