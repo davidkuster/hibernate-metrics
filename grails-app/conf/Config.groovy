@@ -35,7 +35,5 @@ grails.plugins.hibernateMetrics.excludeActions = [
 
 // turned on by default
 grails.plugins.hibernateMetrics.enabled = false
-// pretty-format SQL queries
-grails.plugins.hibernateMetrics.formatSQL = false
 // write SQL to console like logSql=true normally does
 grails.plugins.hibernateMetrics.logSqlToConsole = true

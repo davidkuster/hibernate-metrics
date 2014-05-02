@@ -21,8 +21,8 @@
 					${metric.key} =
 
 					<hibernateMetrics:metricDisplay
-                        name="${metric.key}"
-						value="${metric.value}" />
+            name="${metric.key}"
+            value="${metric.value}" />
 
 				</div>
 

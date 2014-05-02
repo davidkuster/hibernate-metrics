@@ -28,8 +28,14 @@
 
 	<div id="${divName}" style="display:none; max-height:500px;">
 		<g:each in="${output}">
-			${it}
-			<br><br>
+			<g:if test="${it instanceof Map.Entry}">
+				<pre>${it.key}</pre>
+				<pre>${it.value}</pre>
+			</g:if>
+			<g:else>
+				<pre>${it}</pre>
+			</g:else>
+			<br/>
 		</g:each>
 	</div>
 

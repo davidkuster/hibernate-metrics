@@ -3,6 +3,7 @@ package net.talldave.hibernatemetrics
 import grails.util.Holders
 import org.hibernate.stat.Statistics
 import net.talldave.hibernatemetrics.util.SqlLogger
+import net.talldave.hibernatemetrics.util.SqlFormatter
 
 
 class HibernateMetricsService {
@@ -15,7 +16,7 @@ class HibernateMetricsService {
 
     boolean enabled = config.grails.plugins.hibernateMetrics.enabled
     def excludeActions = config.grails.plugins.hibernateMetrics.excludeActions
-    def formatSQL = config.grails.plugins.hibernateMetrics.formatSQL
+    def logToConsole = config.grails.plugins.hibernateMetrics.logSqlToConsole
 
     def initialized
 
@@ -55,7 +56,7 @@ class HibernateMetricsService {
         enabled = true
         initialized = true
 
-        sqlLogger = SqlLogger.create(System.out, formatSQL)
+        sqlLogger = SqlLogger.create(System.out, logToConsole)
         System.out = sqlLogger
     }
 
@@ -100,24 +101,29 @@ class HibernateMetricsService {
         // note: must use recompiled Hibernate core jar file
         // for criteria query stats to be included.
 
+        def collectionStats = getCollectionStats( stats )
         def entityStats = getEntityStats( stats )
         def queryStats = getQueryStats( stats )
+        def loggedQueries = getLoggedQueries()
+        def slowestQuery = getSlowestQuery( stats )
 
-        def loggedQueries = sqlLogger?.readQueries()
+        //println "loading metrics - collection roles = ${stats.collectionRoleNames}"
+        //println "all props = ${stats.properties}\n\n"
 
         def databaseMetrics = [
             'Total Queries': stats.queryExecutionCount,
             'Prepared Statements': stats.prepareStatementCount,
             'Logged SQL': loggedQueries,
-            'Slowest Query Time (ms)': stats.queryExecutionMaxTime,
-            'Slowest Query': [stats.queryExecutionMaxTimeQueryString] - null,
-            'Queries': stats.queries as List,
-            'Query Info': queryStats,
-            'Collections Fetched (DB)': stats.collectionFetchCount,
-            'Collections Loaded (DB or cache)': stats.collectionLoadCount,
-            'Entities Fetched (DB)': stats.entityFetchCount,
-            'Entities Loaded (DB or cache)': stats.entityLoadCount,
+            //'Queries': stats.queries as List,
+            'Query Stats': queryStats,
+            'Slowest Query': slowestQuery,
+            'Collection Info': collectionStats,
             'Entity Info': entityStats,
+            'Query Cache Hit': stats.queryCacheHitCount,
+            'Query Cache Miss': stats.queryCacheMissCount,
+            'Query Cache Put': stats.queryCachePutCount,
+            '2nd level cache': "TODO",
+            'Sessions Opened': stats.sessionOpenCount,
             'Transaction Count': stats.transactionCount,
             'Flush Count': stats.flushCount
         ]
@@ -127,8 +133,39 @@ class HibernateMetricsService {
 
 
     def clearStats() {
+        log.debug "clearing hibernate statistics"
         sessionFactory.statistics.clear()
         sqlLogger?.clear()
+    }
+
+
+    // read entity stats out of the overall hibernate stats obj
+    def getCollectionStats( stats ) {
+        def collections = stats.collectionRoleNames
+        def map = [:]
+
+        collections?.each { entity ->
+            def collectionStats = stats.getCollectionStatistics( entity )
+            def statList = []
+
+            def deleteCount = collectionStats.removeCount
+            def fetchCount = collectionStats.fetchCount
+            def insertCount = collectionStats.recreateCount
+            def loadCount = collectionStats.loadCount
+            def updateCount = collectionStats.updateCount
+
+            if ( deleteCount ) statList << "Removed: $deleteCount"
+            if ( fetchCount ) statList << "Fetch: $fetchCount"
+            if ( insertCount ) statList << "Recreated: $insertCount"
+            if ( loadCount ) statList << "Load: $loadCount"
+            if ( updateCount ) statList << "Update: $updateCount"
+            // not including optimisticFailureCount for now
+
+            if ( statList.size() > 0 )
+                map.put( entity, statList.flatten() )
+        }
+
+        map.sort()
     }
 
 
@@ -199,8 +236,19 @@ class HibernateMetricsService {
             def x = it.value['(Avg*Count)']
             x ? -x : it.value
         }.collectEntries { k, v ->
-            [ k, v as String ]
+            [ (SqlFormatter.format(k)), v as String ]
         }
+    }
+
+    private def getLoggedQueries() {
+        sqlLogger?.readQueries()?.collectEntries { k, v ->
+            [ (SqlFormatter.format(k)), ["Execution Count: $v"] ]
+        }
+    }
+
+    private def getSlowestQuery( stats ) {
+        [ (SqlFormatter.format(stats.queryExecutionMaxTimeQueryString)) :
+            ["Execution Time: ${stats.queryExecutionMaxTime}ms"] ]
     }
 
 }

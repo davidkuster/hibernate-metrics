@@ -25,6 +25,7 @@ The 'excludeActions' setting will bypass metrics tracking for the specified cont
 'enabled' = whether it should happen at startup
 
 'formatSQL' = whether to pretty print the SQL
+- removed - changed to always pretty-print the SQL...
 
 'logSqlToConsole' = whether the SQL will be logged to the console as the normal DataSource logSql=true setting operates.  Note that this should probably be set to false for production environments (?)...
 

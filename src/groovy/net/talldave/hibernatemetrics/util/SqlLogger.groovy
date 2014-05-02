@@ -8,18 +8,16 @@ class SqlLogger extends PrintStream {
     final PrintStream underlying
 
     def sql = [:]
-    def formatter
 
 
-    public SqlLogger(StringBuilder sb, OutputStream os, PrintStream ul, boolean pretty) {
+    public SqlLogger(StringBuilder sb, OutputStream os, PrintStream ul) {
         super(os)
         buf = sb
         underlying = ul
-        if (pretty) formatter = new SqlFormatter()
     }
 
 
-    public static SqlLogger create(PrintStream toLog, boolean pretty, final boolean logToConsole) {
+    public static SqlLogger create(PrintStream toLog, final boolean logToConsole) {
         try {
             final StringBuilder sb = new StringBuilder()
             OutputStream psout = toLog.out
@@ -33,8 +31,7 @@ class SqlLogger extends PrintStream {
                           sb.append((char) b)
                     }
                 },
-                toLog,
-                pretty)
+                toLog)
         }
         catch ( e ) {}
     }
@@ -46,8 +43,6 @@ class SqlLogger extends PrintStream {
 
         s?.eachLine { line ->
             if ( line?.startsWith('Hibernate:') || line?.startsWith('[CRITERIA]') ) {
-                // TODO: probably shouldn't be deciding in this code whether to format normally or for html...
-                if (formatter) line = formatter.formatForHtml(line)
                 def executionCount = sql.get( line, 0 ) // default to 0
                 sql.put( line, ++executionCount )
             }

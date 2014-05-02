@@ -18,7 +18,7 @@ class SqlFormatter {
 
   static String format(String query) {
     if ( query )
-      getFormatter().format(query)
+      getFormatter().format(query).trim()
   }
 
   static String formatForHtml(String query) {

@@ -6,16 +6,17 @@
         }
         else {*/
             $("#clearStatsLink").live( 'click', function() { clearStats(); } );
-            $("#refreshMetricsLink").live( 'click', function() { getMetrics(); } );
+            $("#refreshMetricsLink").live( 'click', function() { getMetrics(1); } );
         //}
 
-        getMetrics();
+        getMetrics(0);
     });
 
-    function getMetrics() {
+    function getMetrics(loadNum) {
         $.ajax({
             url: "${g.createLink(controller:'hibernateMetrics', action:'ajaxDisplayMetrics')}",
             type: "POST",
+            data: { loadNum:loadNum },
             success: function(data) {
                 $("#metrics").html( data );
             },

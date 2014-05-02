@@ -8,11 +8,13 @@
     width: 100%;
     font-size: 1em;
     line-height: 1em;
+    text-align: left;
 }
 
 #clearStatsLink,
 #refreshMetricsLink {
     padding-left: 10px;
+    cursor: pointer;
 }
 
 .metricsWarning {
@@ -38,6 +40,7 @@
 .metricsLink {
     text-decoration: none;
     color: #00fafa;
+    cursor: pointer;
 }
 
 /*.metricsLink .metricsTitle {
