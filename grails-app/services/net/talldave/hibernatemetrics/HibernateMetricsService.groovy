@@ -84,7 +84,16 @@ class HibernateMetricsService {
     }
 
 
-    def getTimeMetrics() {
+    def getMetricsMap() {
+        log.debug "reading hibernate statistics data"
+        def metrics = [ "Time Metrics":getTimeMetrics(),
+            "DB Metrics":getDatabaseMetrics() ]
+        log.debug "hibernate statistics data read"
+        metrics
+    }
+
+
+    private def getTimeMetrics() {
         def timeMetrics = [
             'Total Time (ms)': totalTime,
             'Controller/Service (ms)': actionTime,
@@ -93,9 +102,7 @@ class HibernateMetricsService {
         timeMetrics
     }
 
-
-
-    def getDatabaseMetrics() {
+    private def getDatabaseMetrics() {
         Statistics stats = sessionFactory.getStatistics()
 
         // note: must use recompiled Hibernate core jar file
@@ -106,6 +113,7 @@ class HibernateMetricsService {
         def queryStats = getQueryStats( stats )
         def loggedQueries = getLoggedQueries()
         def slowestQuery = getSlowestQuery( stats )
+        def secondLevelCacheStats = getSecondLevelCacheStats( stats )
 
         //println "loading metrics - collection roles = ${stats.collectionRoleNames}"
         //println "all props = ${stats.properties}\n\n"
@@ -122,8 +130,9 @@ class HibernateMetricsService {
             'Query Cache Hit': stats.queryCacheHitCount,
             'Query Cache Miss': stats.queryCacheMissCount,
             'Query Cache Put': stats.queryCachePutCount,
-            '2nd level cache': "TODO",
+            'Second Level Cache': secondLevelCacheStats,
             'Sessions Opened': stats.sessionOpenCount,
+            'Sessions Closed': stats.sessionCloseCount,
             'Transaction Count': stats.transactionCount,
             'Flush Count': stats.flushCount
         ]
@@ -138,6 +147,38 @@ class HibernateMetricsService {
         sqlLogger?.clear()
     }
 
+
+    // read second level cache stats out of the overall hibernate stats obj
+    private def getSecondLevelCacheStats( stats ) {
+        def regionNames = stats.secondLevelCacheRegionNames
+        def map = [:]
+
+        regionNames?.each { regionName ->
+            def secondLevelStats = stats.getSecondLevelCacheStatistics( regionName )
+            def statList = []
+
+            def inMemory = secondLevelStats.elementCountInMemory
+            def onDisk = secondLevelStats.elementCountOnDisk
+            def hitCount = secondLevelStats.hitCount
+            def missCount = secondLevelStats.missCount
+            def putCount = secondLevelStats.putCount
+            //def entries = secondLevelStats.entries
+            def sizeInMemory = secondLevelStats.sizeInMemory
+
+            if ( inMemory ) statList << "Elements In Memory: $inMemory"
+            if ( onDisk ) statList << "Elements On Disk: $onDisk"
+            if ( hitCount ) statList << "Hits: $hitCount"
+            if ( missCount ) statList << "Miss: $missCount"
+            if ( putCount ) statList << "Put: $putCount"
+            if ( sizeInMemory ) statList << "Memory Size: $sizeInMemory"
+            //if ( entries ) statList << "Entries: $entries"
+
+            if ( statList )
+                map.put( regionName, statList.flatten() )
+        }
+
+        map.sort()
+    }
 
     // read collection stats out of the overall hibernate stats obj
     private def getCollectionStats( stats ) {
