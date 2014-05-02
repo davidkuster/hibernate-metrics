@@ -25,9 +25,6 @@ class HibernateMetricsFilters {
             afterView = {
                 if ( hibernateMetricsService?.shouldTrack( controllerName, actionName ) ) {
                     hibernateMetricsService.markViewEndTime()
-                    session.metrics = [
-                        "Time Metrics":hibernateMetricsService.getTimeMetrics(),
-                        "DB Metrics":hibernateMetricsService.getDatabaseMetrics() ]
                 }
             }
 

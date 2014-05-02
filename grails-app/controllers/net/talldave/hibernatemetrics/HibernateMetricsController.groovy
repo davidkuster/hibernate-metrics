@@ -9,9 +9,10 @@ class HibernateMetricsController {
 
     // get the metrics display via ajax so it can include information about the view rendering
     def ajaxDisplayMetrics(Integer loadNum) {
-        // only clear the first time they're loaded - after that it's manual for the user
+        // read metrics just before being displayed
+        session.metrics = hibernateMetricsService.getMetricsMap()
+        // on first load, clear stats after metrics are read - after that it's manual
         if ( loadNum == 0 ) {
-            // don't clear stats until metrics are being displayed - this should then include stats from redirects & view queries
             hibernateMetricsService.clearStats()
         }
         render( template:"/hibernateMetrics/displayMetrics",
@@ -20,7 +21,7 @@ class HibernateMetricsController {
 
     def ajaxClearStats() {
         hibernateMetricsService.clearStats()
-        session.metrics = null // initialized in PerformanceMetricsFilters.groovy
+        session.metrics = null
         render( ["success":"true"] as JSON )
     }
 
