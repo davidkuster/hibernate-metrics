@@ -26,16 +26,17 @@
 	<span class="metricsLink" id="${linkName}" title="${output.join(' \n')}">Results (${value.size()})</span>
 
 
-	<div id="${divName}" style="display:none; max-height:500px;">
-		<g:each in="${output}">
-			<g:if test="${it instanceof Map.Entry}">
-				<pre>${it.key}</pre>
-				<pre>${it.value}</pre>
-			</g:if>
-			<g:else>
-				<pre>${it}</pre>
-			</g:else>
-			<br/>
+	<div id="${divName}" style="display:none; max-height:750px;">
+		<g:each in="${output}" var="data" status="i">
+			<div class="metricsCollection metricsCollection${i % 2 == 0 ? 'Even' : 'Odd'}">
+				<g:if test="${data instanceof Map.Entry}">
+					<pre>${data.key}</pre>
+					<pre>${data.value}</pre>
+				</g:if>
+				<g:else>
+					<pre>${data}</pre>
+				</g:else>
+			</div>
 		</g:each>
 	</div>
 
@@ -46,8 +47,8 @@
 			$("#${divName}").dialog({
 				autoOpen: false,
 				height: "auto",
-				width: 500,
-				maxHeight: 500,
+				width: 550,
+				maxHeight: 750,
 				modal: false,
 				title: "${name}",
 				buttons: {

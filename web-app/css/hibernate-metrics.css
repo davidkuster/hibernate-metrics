@@ -34,7 +34,7 @@
 }
 
 .metricsSection {
-    padding-bottom:5px;
+    padding-bottom: 5px;
 }
 
 .metricsLink {
@@ -52,3 +52,13 @@
     background-color: white;
     color: black;
 }*/
+
+.metricsCollection {
+    padding: 10px;
+}
+.metricsCollectionOdd {
+    background-color: #eee;
+}
+.metricsCollectionEven {
+    background-color: #fff;
+}
