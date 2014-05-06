@@ -2,7 +2,6 @@
     $(document).ready( function() {
 
         console.log( "jquery version = " + $().jquery );
-
         if ( $().jquery == "1.8.3" ) {
             $("#clearStatsLink").on( 'click', function() { clearStats(); } );
             $("#refreshMetricsLink").on( 'click', function() { getMetrics(); } );
@@ -10,6 +9,9 @@
         else {
             $("#clearStatsLink").live( 'click', function() { clearStats(); } );
             $("#refreshMetricsLink").live( 'click', function() { getMetrics(1); } );
+            $(".metricsLink").live( 'click', function(event) {
+                displayMetricsDialog( $(event.target) );
+            } );
         }
 
         getMetrics(0);
@@ -47,8 +49,45 @@
             async: true
         });
     }
+
+    function displayMetricsDialog(item) {
+        var divId = item.attr("divid");
+        var divTitle = item.attr("divtitle");
+        var selector = $("#"+divId);
+        //console.log(selector);
+
+        if ( selector.is(":visible") ) {
+            selector.dialog('close');
+        }
+        else {
+            initDialog(selector, divTitle);
+            selector.dialog('open');
+            selector.dialog( 'option', 'position', ['middle', 60] );
+        }
+    }
+
+    function initDialog(selector, divTitle) {
+        if ( ! selector.is(":data(dialog)") ) {
+            selector.dialog({
+                autoOpen: false,
+                height: "auto",
+                width: 550,
+                maxHeight: 750,
+                modal: false,
+                title: divTitle,
+                buttons: {
+                    /*"Copy IE" : function() {
+                        //for IE ONLY!
+                        window.clipboardData.setData('Text','Copied Text');
+                    },*/
+                    "Close": function() {
+                        selector.dialog('close');
+                    }
+                }
+            });
+        }
+    }
 </script>
 
-<div id="metrics">
 
-</div>
+<div id="metrics"></div>

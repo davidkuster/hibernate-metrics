@@ -1,9 +1,4 @@
 
-
-<g:set var="linkName" value="link_${name?.replace(' ','_')}" />
-<g:set var="divName" value="div_${name?.replace(' ','_')}" />
-
-
 <g:if test="${value instanceof Map && value?.size()}">
 	<g:set var="output" value="${value.entrySet()}" />
 </g:if>
@@ -15,7 +10,6 @@
 </g:elseif>
 
 
-
 <g:if test="${! output}">
 
 	N/A
@@ -23,10 +17,19 @@
 </g:if>
 <g:else>
 
-	<span class="metricsLink" id="${linkName}" title="${output.join(' \n')}">Results (${value.size()})</span>
+	<g:set var="linkName" value="link_${name?.replace(' ','_')}" />
+	<g:set var="divName" value="div_${name?.replace(' ','_')}" />
 
 
-	<div id="${divName}" style="display:none; max-height:750px;">
+	<span class="metricsLink"
+		id="${linkName}"
+		divid="${divName}"
+		divtitle="${name}"
+		title="${output.join(' \n')}">
+			Results (${value.size()})
+	</span>
+
+	<div id="${divName}" style="display:none;" class="collectionDialog">
 		<g:each in="${output}" var="data" status="i">
 			<div class="metricsCollection metricsCollection${i % 2 == 0 ? 'Even' : 'Odd'}">
 				<g:if test="${data instanceof Map.Entry}">
@@ -39,41 +42,5 @@
 			</div>
 		</g:each>
 	</div>
-
-
-	<script type="text/javascript">
-		$(document).ready( function() {
-
-			$("#${divName}").dialog({
-				autoOpen: false,
-				height: "auto",
-				width: 550,
-				maxHeight: 750,
-				modal: false,
-				title: "${name}",
-				buttons: {
-					/*"Copy IE" : function() {
-						//for IE ONLY!
-	    				window.clipboardData.setData('Text','Copied Text');
-					},*/
-					"Close": function() {
-						$("#${divName}").dialog('close');
-					}
-				}
-			});
-
-			$("#${linkName}").click(function() {
-				if ( $("#${divName}").is(":visible") )
-					$("#${divName}").dialog('close');
-				else {
-					$("#${divName}").dialog('open');
-					$('#${divName}').dialog( 'option', 'position', ['middle', 60] );
-
-				}
-			});
-
-		});
-
-	</script>
 
 </g:else>

@@ -62,3 +62,8 @@
 .metricsCollectionEven {
     background-color: #fff;
 }
+
+.collectionDialog {
+    display: none;
+    max-height:750px;
+}
