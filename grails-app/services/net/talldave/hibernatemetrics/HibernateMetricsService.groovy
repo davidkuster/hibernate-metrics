@@ -162,8 +162,12 @@ class HibernateMetricsService {
             def hitCount = secondLevelStats.hitCount
             def missCount = secondLevelStats.missCount
             def putCount = secondLevelStats.putCount
-            //def entries = secondLevelStats.entries
             def sizeInMemory = secondLevelStats.sizeInMemory
+
+            // this blows up when trying to read the Hibernate entries, so don't
+            def entries
+            if ( ! regionName.startsWith('org.hibernate') )
+                entries = secondLevelStats.entries
 
             if ( inMemory ) statList << "Elements In Memory: $inMemory"
             if ( onDisk ) statList << "Elements On Disk: $onDisk"
