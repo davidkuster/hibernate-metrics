@@ -1,10 +1,16 @@
 <script type='text/javascript'>
     $(document).ready( function() {
 
-        console.log( "jquery version = " + $().jquery );
-        if ( $().jquery == "1.8.3" ) {
+        // TODO: figure out how this should play nice with different versions of jquery
+        // TODO: should probably use js apply method & parameterize "on" vs "live"
+        var jqueryVersion = $().jquery;
+        console.log( "jquery version = " + jqueryVersion );
+        if ( jqueryVersion == "1.8.3" || jqueryVersion == "1.10.2" ) {
             $("#clearStatsLink").on( 'click', function() { clearStats(); } );
-            $("#refreshMetricsLink").on( 'click', function() { getMetrics(); } );
+            $("#refreshMetricsLink").on( 'click', function() { getMetrics(1); } );
+            $(".metricsLink").on( 'click', function(event) {
+                displayMetricsDialog( $(event.target) );
+            } );
         }
         else {
             $("#clearStatsLink").live( 'click', function() { clearStats(); } );
