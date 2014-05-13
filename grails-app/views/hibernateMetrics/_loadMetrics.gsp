@@ -4,11 +4,11 @@
         // TODO: figure out how this should play nice with different versions of jquery
         // TODO: should probably use js apply method & parameterize "on" vs "live"
         var jqueryVersion = $().jquery;
-        console.log( "jquery version = " + jqueryVersion );
+        console.log( "jquery version = [" + jqueryVersion + "]" );
         if ( jqueryVersion == "1.8.3" || jqueryVersion == "1.10.2" ) {
-            $("#clearStatsLink").on( 'click', function() { clearStats(); } );
-            $("#refreshMetricsLink").on( 'click', function() { getMetrics(1); } );
-            $(".metricsLink").on( 'click', function(event) {
+            $("#metrics").on( 'click', '#clearStatsLink', function() { clearStats(); } );
+            $("#metrics").on( 'click', '#refreshMetricsLink', function() { getMetrics(1); } );
+            $("#metrics").on( 'click', '.metricsLink', function(event) {
                 displayMetricsDialog( $(event.target) );
             } );
         }
