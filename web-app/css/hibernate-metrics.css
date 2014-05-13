@@ -11,6 +11,10 @@
     text-align: left;
 }
 
+#metrics label, span {
+    display: inline;
+}
+
 #clearStatsLink,
 #refreshMetricsLink {
     padding-left: 10px;
