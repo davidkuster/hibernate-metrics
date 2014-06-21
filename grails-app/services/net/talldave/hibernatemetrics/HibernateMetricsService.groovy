@@ -130,6 +130,9 @@ class HibernateMetricsService {
             'Query Cache Hit': stats.queryCacheHitCount,
             'Query Cache Miss': stats.queryCacheMissCount,
             'Query Cache Put': stats.queryCachePutCount,
+            '2L Cache Hit': stats.secondLevelCacheHitCount,
+            '2L Cache Miss': stats.secondLevelCacheMissCount,
+            '2L Cache Put': stats.secondLevelCachePutCount,
             'Second Level Cache': secondLevelCacheStats,
             'Sessions Opened': stats.sessionOpenCount,
             'Sessions Closed': stats.sessionCloseCount,
@@ -165,9 +168,9 @@ class HibernateMetricsService {
             def sizeInMemory = secondLevelStats.sizeInMemory
 
             // this blows up when trying to read the Hibernate entries, so don't
-            def entries
+            def entryIds
             if ( ! regionName.startsWith('org.hibernate') )
-                entries = secondLevelStats.entries
+                entryIds = secondLevelStats.entries?.keySet()
 
             if ( inMemory ) statList << "Elements In Memory: $inMemory"
             if ( onDisk ) statList << "Elements On Disk: $onDisk"
@@ -175,7 +178,7 @@ class HibernateMetricsService {
             if ( missCount ) statList << "Miss: $missCount"
             if ( putCount ) statList << "Put: $putCount"
             if ( sizeInMemory ) statList << "Memory Size: $sizeInMemory"
-            //if ( entries ) statList << "Entries: $entries"
+            if ( entryIds ) statList << "Entries: $entryIds"
 
             if ( statList )
                 map.put( regionName, statList.flatten() )
