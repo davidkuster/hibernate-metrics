@@ -14,17 +14,29 @@
 
 			<u>${section.key}</u>
 
-			<g:each var="metric" in="${section.value}">
+            <g:each var="metricGrouping" in="${section.value}">
 
-				<div class="metricsUnit">
+                <div class="metricsGrouping">
 
-					${metric.key} =
+                    [
 
-					<hibernateMetrics:metricDisplay
-                        name="${metric.key}"
-                        value="${metric.value}" />
+                    <label class="metricsGroupingTitle">${metricGrouping.key}:</label>
 
-				</div>
+        			<g:each var="metric" in="${metricGrouping.value}" status="i">
+
+                        <g:if test="${i}"> | </g:if>
+
+    					${metric.key} =
+
+    					<hibernateMetrics:metricDisplay
+                            name="${metric.key}"
+                            value="${metric.value}" />
+
+                    </g:each>
+
+                    ]
+
+                </div>
 
 			</g:each>
 

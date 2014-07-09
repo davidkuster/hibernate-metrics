@@ -87,7 +87,7 @@ class HibernateMetricsService {
     def getMetricsMap() {
         log.debug "reading hibernate statistics data"
         def metrics = [ "Time Metrics":getTimeMetrics(),
-            "DB Metrics":getDatabaseMetrics() ]
+                        "DB Metrics":getDatabaseMetrics() ]
         log.debug "hibernate statistics data read"
         metrics
     }
@@ -95,9 +95,11 @@ class HibernateMetricsService {
 
     private def getTimeMetrics() {
         def timeMetrics = [
-            'Total Time (ms)': totalTime,
-            'Controller/Service (ms)': actionTime,
-            'View (ms)': viewTime
+            'ms': [
+                'Total Time': totalTime,
+                'Controller/Service': actionTime,
+                'View': viewTime
+            ]
         ]
         timeMetrics
     }
@@ -119,25 +121,37 @@ class HibernateMetricsService {
         //println "all props = ${stats.properties}\n\n"
 
         def databaseMetrics = [
-            'Total Queries': stats.queryExecutionCount,
-            'Prepared Statements': stats.prepareStatementCount,
-            'Logged SQL': loggedQueries,
-            //'Queries': stats.queries as List,
-            'Query Stats': queryStats,
-            'Slowest Query': slowestQuery,
-            'Collection Info': collectionStats,
-            'Entity Info': entityStats,
-            'Query Cache Hit': stats.queryCacheHitCount,
-            'Query Cache Miss': stats.queryCacheMissCount,
-            'Query Cache Put': stats.queryCachePutCount,
-            '2L Cache Hit': stats.secondLevelCacheHitCount,
-            '2L Cache Miss': stats.secondLevelCacheMissCount,
-            '2L Cache Put': stats.secondLevelCachePutCount,
-            'Second Level Cache': secondLevelCacheStats,
-            'Sessions Opened': stats.sessionOpenCount,
-            'Sessions Closed': stats.sessionCloseCount,
-            'Transaction Count': stats.transactionCount,
-            'Flush Count': stats.flushCount
+            'Queries': [
+                'Total': stats.queryExecutionCount,
+                'Prepared Statements': stats.prepareStatementCount,
+                'Logged SQL (unique)': loggedQueries,
+                //'Queries': stats.queries as List,
+                'Stats': queryStats,
+                'Slowest': slowestQuery
+            ],
+            'Domains': [
+                'Entities': entityStats,
+                'Collections': collectionStats
+            ],
+            'Query Cache': [
+                'Hit': stats.queryCacheHitCount,
+                'Miss': stats.queryCacheMissCount,
+                'Put': stats.queryCachePutCount
+            ],
+            '2L Cache': [
+                'Hit': stats.secondLevelCacheHitCount,
+                'Miss': stats.secondLevelCacheMissCount,
+                'Put': stats.secondLevelCachePutCount,
+                'Objects': secondLevelCacheStats
+            ],
+            'Sessions': [
+                'Opened': stats.sessionOpenCount,
+                'Closed': stats.sessionCloseCount
+            ],
+            'Misc Counts': [
+                'Transactions': stats.transactionCount,
+                'Flushes': stats.flushCount
+            ]
         ]
 
         databaseMetrics

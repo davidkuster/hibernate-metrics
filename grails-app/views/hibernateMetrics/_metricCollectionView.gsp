@@ -26,7 +26,7 @@
 		divid="${divName}"
 		divtitle="${name}"
 		title="${output.join(' \n')}">
-			Results (${value.size()})
+			${value.size()} (View)
 	</span>
 
 	<div id="${divName}" style="display:none;" class="collectionDialog">

@@ -1,14 +1,19 @@
 
 /* performance metrics */
 #metrics {
-    color: #fff;
-    background-color: #A52A2A; /* #A0522D; */
+    color: #fff; /*#464646;*/ /*#fff;*/
+    /*background-color: #efefef; #abbf78; /*#fff;*/ /*#A52A2A;*/ /* #A0522D; */
+    /*background-color: #555;*/
+    /*background-image: -moz-linear-gradient(center top , #ffffff, #eaeaea);*/
+    background-color: #fff;
+    background-image: -moz-linear-gradient(center top , #555, #111);
     margin: 0;
     padding: 20px;
     width: 100%;
-    font-size: 1em;
-    line-height: 1em;
+    font-size: 12px;
+    line-height: 18px;
     text-align: left;
+    font-family: Consolas, monospace, serif;
 }
 
 #metrics label, span {
@@ -22,20 +27,45 @@
 }
 
 .metricsWarning {
-    color: red;
-    font-weight: bold;
+    background-color: #A52A2A; /*red;*/
+    /*font-weight: bold;*/
+    color: #fff;
+    box-sizing: border-box;
+    padding: 2px 6px 2px 6px;
 }
 
 .metricsAttention {
-    color: yellow;
-    font-weight: bold;
+    background-color: #D85721; /*#f4b04f; /*#fffc19; /*yellow;*/
+    /*font-weight: bold;*/
+    color: #fff;
+    box-sizing: border-box;
+    padding: 2px 6px 2px 6px;
 }
 
 .metricsUnit {
     white-space: nowrap;
-    padding-left: 15px;
+    /*padding-left: 5px;*/
     display: inline;
+    color: #fff; /*#555;*/
 }
+
+.metricsGrouping {
+    white-space: nowrap;
+    display: inline;
+    padding-left: 10px;
+    color: #fff;
+}
+
+.metricsGroupingTitle {
+    font-weight: bold;
+}
+
+/*.metricsValue {
+    color: #fff; /*#111;*
+    box-sizing: border-box;
+    padding: 3px;
+    background-color: #5ebd5e;
+}*/
 
 .metricsSection {
     padding-bottom: 5px;
@@ -43,7 +73,7 @@
 
 .metricsLink {
     text-decoration: none;
-    color: #00fafa;
+    color: #07c; /*#00fafa;*/
     cursor: pointer;
 }
 
