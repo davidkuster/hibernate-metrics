@@ -35,6 +35,7 @@
     box-sizing: border-box;
     border-radius: 7px;
     padding: 0px 6px;
+    cursor: auto;
 }
 
 .metricsAttention {
@@ -44,6 +45,7 @@
     box-sizing: border-box;
     border-radius: 7px;
     padding: 0px 6px;
+    cursor: auto;
 }
 
 .metricsGrouping {
@@ -62,12 +64,17 @@
 
 .metricsTitle {
     font-weight: bold;
-    cursor: none;
+    cursor: auto;
+}
+
+.metricsValue {
+    cursor: auto;
 }
 
 .metricsGroupingTitle {
     /*font-weight: bold;*/
     text-decoration: underline;
+    cursor: auto;
 }
 
 .metricsLink {

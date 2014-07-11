@@ -142,13 +142,13 @@ class HibernateMetricsService {
                 'Hit': stats.secondLevelCacheHitCount,
                 'Miss': stats.secondLevelCacheMissCount,
                 'Put': stats.secondLevelCachePutCount,
-                'Objects': secondLevelCacheStats
+                'Domains': secondLevelCacheStats
             ],
             'Sessions': [
                 'Opened': stats.sessionOpenCount,
                 'Closed': stats.sessionCloseCount
             ],
-            'Misc Counts': [
+            'Misc': [
                 'Transactions': stats.transactionCount,
                 'Flushes': stats.flushCount
             ]
@@ -192,7 +192,7 @@ class HibernateMetricsService {
             if ( missCount ) statList << "Miss: $missCount"
             if ( putCount ) statList << "Put: $putCount"
             if ( sizeInMemory ) statList << "Memory Size: $sizeInMemory"
-            if ( entryIds ) statList << "Entries: $entryIds"
+            if ( entryIds ) statList << "IDs: $entryIds"
 
             if ( statList )
                 map.put( regionName, statList.flatten() )

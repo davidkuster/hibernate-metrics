@@ -21,13 +21,14 @@
 
         			<g:each var="metric" in="${metricGrouping.value}" status="i">
 
-                        <g:if test="${i}"> | </g:if>
+                        &nbsp;
 
     					${metric.key} =
 
     					<hibernateMetrics:metricDisplay
                             name="${metric.key}"
-                            value="${metric.value}" />
+                            value="${metric.value}"
+                            type="${section.key}" />
 
                     </g:each>
 
