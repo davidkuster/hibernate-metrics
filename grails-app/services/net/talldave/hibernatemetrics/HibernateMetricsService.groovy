@@ -96,7 +96,7 @@ class HibernateMetricsService {
     private def getTimeMetrics() {
         def timeMetrics = [
             'ms': [
-                'Total Time': totalTime,
+                'Total': totalTime,
                 'Controller/Service': actionTime,
                 'View': viewTime
             ]
@@ -124,7 +124,7 @@ class HibernateMetricsService {
             'Queries': [
                 'Total': stats.queryExecutionCount,
                 'Prepared Statements': stats.prepareStatementCount,
-                'Logged SQL (unique)': loggedQueries,
+                'Logged SQL': loggedQueries,
                 //'Queries': stats.queries as List,
                 'Stats': queryStats,
                 'Slowest': slowestQuery

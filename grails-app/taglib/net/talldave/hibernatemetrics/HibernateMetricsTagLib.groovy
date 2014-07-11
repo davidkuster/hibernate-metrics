@@ -54,9 +54,9 @@ class HibernateMetricsTagLib {
 
         // TODO: would be better to let service dictate severity level, per metric
 
-        if ( value?.toString()?.isNumber() && value > 100 )
+        if ( value?.toString()?.isNumber() && value >= 100 )
             out << "<label title='$title' class='metricsWarning'>$value</label>"
-        else if ( value?.toString()?.isNumber() && value > 50 )
+        else if ( value?.toString()?.isNumber() && value >= 50 )
             out << "<label title='$title' class='metricsAttention'>$value</label>"
         else if ( value instanceof Map || value instanceof List )
             out << render( template:'/hibernateMetrics/metricCollectionView',

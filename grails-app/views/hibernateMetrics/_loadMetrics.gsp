@@ -1,3 +1,6 @@
+<link rel="stylesheet" href="${resource(dir:'css', file:'hibernate-metrics.css', plugin:'hibernate-metrics')}" type="text/css">
+
+
 <script type='text/javascript'>
     $(document).ready( function() {
 
