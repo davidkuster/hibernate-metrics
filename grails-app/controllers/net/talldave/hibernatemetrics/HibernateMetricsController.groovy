@@ -28,14 +28,14 @@ class HibernateMetricsController {
     // action to enable metrics on the fly
     def enableMetrics() {
         hibernateMetricsService.enableMetrics()
-        flash.message = "Performance Metrics Enabled"
+        flash.message = "Hibernate Metrics Enabled"
         doRedirect(request)
     }
 
     // action to disable metrics on the fly
     def disableMetrics() {
         hibernateMetricsService.disableMetrics()
-        flash.message = "Performance Metrics Disabled"
+        flash.message = "Hibernate Metrics Disabled"
         doRedirect(request)
     }
 
