@@ -17,10 +17,15 @@ class HibernateMetrics {
     }
 
 
-    // apparently not possible to use varargs and inline closure param - bummer
-    //static void withSqlLogging( DatabaseMetricsType... types = [ALL], Closure c ) {
-    static void withSqlLogging( List<DatabaseMetricsType> types = [ALL], Closure c ) {
-        if ( ! c ) return
+    //static void withSqlLogging( List<DatabaseMetricsType> types = [ALL], Closure c ) {
+    // use varargs - last param should be a closure
+    static void withSqlLogging(... params) {
+        List types = params as List
+        Closure c = types?.pop()
+
+        if ( ! c || ! types?.every { it in DatabaseMetricsType } ) {
+            throw new IllegalArgumentException( "invalid parameters to withSqlLogging $params - expects MetricsType enum values (optional) and closure" )
+        }
 
         initService()
 
@@ -42,20 +47,21 @@ class HibernateMetrics {
 
 
     static private void displayMetricsResults(Map results, List<DatabaseMetricsType> types) {
+        def timeMetrics = formatMetrics( results['Time Metrics'], types )
+        def dbMetrics = formatMetrics( results['DB Metrics'], types )
+
+        StringBuilder sb = new StringBuilder()
+        if ( timeMetrics ) sb.append( "\nTime Metrics:\n$timeMetrics\n" )
+        if ( dbMetrics ) sb.append( "\nDB Metrics:\n$dbMetrics\n" )
+
         println """
 ---------- Hibernate Metrics ----------
-
-Time Metrics:
-${formatMetrics( results['Time Metrics'] )}
-
-DB Metrics:
-${formatMetrics( results['DB Metrics'], types )}
-
+${sb}
 ---------------------------------------
 """
     }
 
-    static private String formatMetrics( Map metrics, List types = null ) {
+    static private String formatMetrics( Map metrics, List types ) {
         def typeNames = types*.toString()
 
         metrics.collect { k, v ->

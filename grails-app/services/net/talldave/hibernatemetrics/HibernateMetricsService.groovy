@@ -104,7 +104,7 @@ class HibernateMetricsService {
 
     private Map getTimeMetrics() {
         Map timeMetrics = [
-            'ms': [
+            (TIME.toString()): [
                 'Total': totalTime,
                 'Controller/Service': actionTime,
                 'View': viewTime
