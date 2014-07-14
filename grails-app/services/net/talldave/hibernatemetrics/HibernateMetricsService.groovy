@@ -2,7 +2,7 @@ package net.talldave.hibernatemetrics
 
 import net.talldave.hibernatemetrics.util.SqlLogger
 import net.talldave.hibernatemetrics.util.SqlFormatter
-import static net.talldave.hibernatemetrics.DatabaseMetricsType.*
+import static net.talldave.hibernatemetrics.MetricsType.*
 
 import grails.util.Holders
 import org.hibernate.stat.Statistics

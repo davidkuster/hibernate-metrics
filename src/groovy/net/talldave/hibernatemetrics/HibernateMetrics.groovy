@@ -1,6 +1,6 @@
 package net.talldave.hibernatemetrics
 
-import static net.talldave.hibernatemetrics.DatabaseMetricsType.*
+import static net.talldave.hibernatemetrics.MetricsType.*
 
 import grails.util.Holders
 
@@ -17,13 +17,13 @@ class HibernateMetrics {
     }
 
 
-    //static void withSqlLogging( List<DatabaseMetricsType> types = [ALL], Closure c ) {
+    //static void withSqlLogging( List<MetricsType> types = [ALL], Closure c ) {
     // use varargs - last param should be a closure
     static void withSqlLogging(... params) {
         List types = params as List
         Closure c = types?.pop()
 
-        if ( ! c || ! types?.every { it in DatabaseMetricsType } ) {
+        if ( ! c || ! types?.every { it in MetricsType } ) {
             throw new IllegalArgumentException( "invalid parameters to withSqlLogging $params - expects MetricsType enum values (optional) and closure" )
         }
 
@@ -46,7 +46,7 @@ class HibernateMetrics {
     }
 
 
-    static private void displayMetricsResults(Map results, List<DatabaseMetricsType> types) {
+    static private void displayMetricsResults(Map results, List<MetricsType> types) {
         def timeMetrics = formatMetrics( results['Time Metrics'], types )
         def dbMetrics = formatMetrics( results['DB Metrics'], types )
 
