@@ -1,9 +1,11 @@
 package net.talldave.hibernatemetrics
 
-import grails.util.Holders
-import org.hibernate.stat.Statistics
 import net.talldave.hibernatemetrics.util.SqlLogger
 import net.talldave.hibernatemetrics.util.SqlFormatter
+import static net.talldave.hibernatemetrics.DatabaseMetricsType.*
+
+import grails.util.Holders
+import org.hibernate.stat.Statistics
 
 
 class HibernateMetricsService {
@@ -14,6 +16,7 @@ class HibernateMetricsService {
 
     def config = Holders.config
 
+    // holding state in a service - bad Dave, bad!
     boolean enabled = config.grails.plugins.hibernateMetrics.enabled ?: false
     boolean logToConsole = config.grails.plugins.hibernateMetrics.logSqlToConsole ?: true
     def excludeActions = [ 'hibernateMetrics':['*'] ] << config.grails.plugins.hibernateMetrics.excludeActions
@@ -29,7 +32,7 @@ class HibernateMetricsService {
 
 
 
-    def shouldTrack( controllerName, actionName ) {
+    boolean shouldTrack( controllerName, actionName ) {
         if ( ! enabled )
             return false
         else {
@@ -49,7 +52,7 @@ class HibernateMetricsService {
     }
 
 
-    def enableMetrics() {
+    void enableMetrics() {
         sessionFactory.settings.sqlStatementLogger.logToStdout = true
         sessionFactory.settings.sqlStatementLogger.formatSql = false
         sessionFactory.statistics.statisticsEnabled = true
@@ -60,7 +63,7 @@ class HibernateMetricsService {
         System.out = sqlLogger
     }
 
-    def disableMetrics() {
+    void disableMetrics() {
         System.out = sqlLogger.underlying
 
         sessionFactory.settings.sqlStatementLogger.logToStdout = false
@@ -69,106 +72,107 @@ class HibernateMetricsService {
     }
 
 
-
-    def markStartTime() {
-        startMillis = System.currentTimeMillis()
-    }
-
-    def markActionEndTime() {
-        actionTime = System.currentTimeMillis() - startMillis
-    }
-
-    def markViewEndTime() {
-        totalTime = System.currentTimeMillis() - startMillis
-        viewTime = totalTime - actionTime
-    }
-
-
-    def getMetricsMap() {
-        log.debug "reading hibernate statistics data"
-        def metrics = [ "Time Metrics":getTimeMetrics(),
-                        "DB Metrics":getDatabaseMetrics() ]
-        log.debug "hibernate statistics data read"
-        metrics
-    }
-
-
-    private def getTimeMetrics() {
-        def timeMetrics = [
-            'ms': [
-                'Total': totalTime,
-                'Controller/Service': actionTime,
-                'View': viewTime
-            ]
-        ]
-        timeMetrics
-    }
-
-    private def getDatabaseMetrics() {
-        Statistics stats = sessionFactory.getStatistics()
-
-        // note: must use recompiled Hibernate core jar file
-        // for criteria query stats to be included.
-
-        def collectionStats = getCollectionStats( stats )
-        def entityStats = getEntityStats( stats )
-        def queryStats = getQueryStats( stats )
-        def loggedQueries = getLoggedQueries()
-        def slowestQuery = getSlowestQuery( stats )
-        def secondLevelCacheStats = getSecondLevelCacheStats( stats )
-
-        //println "loading metrics - collection roles = ${stats.collectionRoleNames}"
-        //println "all props = ${stats.properties}\n\n"
-
-        def databaseMetrics = [
-            'Queries': [
-                'Total': stats.queryExecutionCount,
-                'Prepared Statements': stats.prepareStatementCount,
-                'Logged SQL': loggedQueries,
-                //'Queries': stats.queries as List,
-                'Stats': queryStats,
-                'Slowest': slowestQuery
-            ],
-            'Domains': [
-                'Entities': entityStats,
-                'Collections': collectionStats
-            ],
-            'Query Cache': [
-                'Hit': stats.queryCacheHitCount,
-                'Miss': stats.queryCacheMissCount,
-                'Put': stats.queryCachePutCount
-            ],
-            '2L Cache': [
-                'Hit': stats.secondLevelCacheHitCount,
-                'Miss': stats.secondLevelCacheMissCount,
-                'Put': stats.secondLevelCachePutCount,
-                'Domains': secondLevelCacheStats
-            ],
-            'Sessions': [
-                'Opened': stats.sessionOpenCount,
-                'Closed': stats.sessionCloseCount
-            ],
-            'Misc': [
-                'Transactions': stats.transactionCount,
-                'Flushes': stats.flushCount
-            ]
-        ]
-
-        databaseMetrics
-    }
-
-
-    def clearStats() {
+    void clearStats() {
         log.debug "clearing hibernate statistics"
         sessionFactory.statistics.clear()
         sqlLogger?.clear()
     }
 
 
+    void markStartTime() {
+        startMillis = System.currentTimeMillis()
+    }
+
+    void markActionEndTime() {
+        actionTime = System.currentTimeMillis() - startMillis
+    }
+
+    void markViewEndTime() {
+        totalTime = System.currentTimeMillis() - startMillis
+        viewTime = totalTime - actionTime
+    }
+
+
+    Map getMetricsMap() {
+        log.debug "reading hibernate statistics data"
+        Map metrics = [ "Time Metrics":getTimeMetrics(),
+                        "DB Metrics":getDatabaseMetrics() ]
+        log.debug "hibernate statistics data read"
+        metrics
+    }
+
+
+    private Map getTimeMetrics() {
+        Map timeMetrics = [
+            'ms': [
+                'Total': totalTime,
+                'Controller/Service': actionTime,
+                'View': viewTime
+            ]
+        ]
+    }
+
+    // note: must use recompiled Hibernate core jar file for criteria query stats to be included.
+    private Map getDatabaseMetrics() {
+        Statistics stats = sessionFactory.getStatistics()
+
+        //println "loading metrics - collection roles = ${stats.collectionRoleNames}"
+        //println "all props = ${stats.properties}\n\n"
+
+        Map databaseMetrics
+
+        // necessary to synchronize this? (as per http://stackoverflow.com/questions/8416366/hibernate-profiling)
+        //synchronized (stats) {
+        def loggedQueries = getLoggedQueries()
+        def queryStats = getQueryStats( stats )
+        def slowestQuery = getSlowestQuery( stats )
+        def entityStats = getEntityStats( stats )
+        def collectionStats = getCollectionStats( stats )
+        def secondLevelCacheStats = getSecondLevelCacheStats( stats )
+
+        databaseMetrics = [
+            (COUNTS.toString()): [
+                'Queries Executed': stats.queryExecutionCount,
+                'Prepared Statements': stats.prepareStatementCount,
+                'Transactions': stats.transactionCount,
+                'Flushes': stats.flushCount
+            ],
+            (SQL.toString()): [
+                'Logged to Console': loggedQueries,
+                'Executed': stats.queries as List,
+                'Stats': queryStats,
+                'Slowest': slowestQuery
+            ],
+            (DOMAINS.toString()): [
+                'Entities': entityStats,
+                'Collections': collectionStats
+            ],
+            (QUERY_CACHE.toString()): [
+                'Hit': stats.queryCacheHitCount,
+                'Miss': stats.queryCacheMissCount,
+                'Put': stats.queryCachePutCount
+            ],
+            (SECOND_LEVEL_CACHE.toString()): [
+                'Hit': stats.secondLevelCacheHitCount,
+                'Miss': stats.secondLevelCacheMissCount,
+                'Put': stats.secondLevelCachePutCount,
+                'Domains': secondLevelCacheStats
+            ],
+            (SESSIONS.toString()): [
+                'Opened': stats.sessionOpenCount,
+                'Closed': stats.sessionCloseCount
+            ]
+        ]
+        //}
+        databaseMetrics
+    }
+
+
+
     // read second level cache stats out of the overall hibernate stats obj
-    private def getSecondLevelCacheStats( stats ) {
+    private Map getSecondLevelCacheStats( stats ) {
         def regionNames = stats.secondLevelCacheRegionNames
-        def map = [:]
+        Map map = [:]
 
         regionNames?.each { regionName ->
             def secondLevelStats = stats.getSecondLevelCacheStatistics( regionName )
@@ -202,9 +206,9 @@ class HibernateMetricsService {
     }
 
     // read collection stats out of the overall hibernate stats obj
-    private def getCollectionStats( stats ) {
+    private Map getCollectionStats( stats ) {
         def collections = stats.collectionRoleNames
-        def map = [:]
+        Map map = [:]
 
         collections?.each { collection ->
             def collectionStats = stats.getCollectionStatistics( collection )
@@ -231,9 +235,9 @@ class HibernateMetricsService {
 
 
     // read entity stats out of the overall hibernate stats obj
-    private def getEntityStats( stats ) {
+    private Map getEntityStats( stats ) {
         def entities = stats.entityNames
-        def map = [:]
+        Map map = [:]
 
         entities?.each { entity ->
             def entityStats = stats.getEntityStatistics( entity )
@@ -244,13 +248,14 @@ class HibernateMetricsService {
             def insertCount = entityStats.insertCount
             def loadCount = entityStats.loadCount
             def updateCount = entityStats.updateCount
+            def optFailCount = entityStats.optimisticFailureCount
 
             if ( deleteCount ) statList << "Delete: $deleteCount"
             if ( fetchCount ) statList << "Fetch: $fetchCount"
             if ( insertCount ) statList << "Insert: $insertCount"
             if ( loadCount ) statList << "Load: $loadCount"
             if ( updateCount ) statList << "Update: $updateCount"
-            // not including optimisticFailureCount for now
+            if ( optFailCount ) statList << "State Object Exceptions: $optFailCount"
 
             if ( statList )
                 map.put( entity, statList.flatten() )
@@ -261,9 +266,9 @@ class HibernateMetricsService {
 
 
     // read query stats out of the overall hibernate stats obj
-    private def getQueryStats( stats ) {
+    private Map getQueryStats( stats ) {
         def queries = stats.queries
-        def map = [:]
+        Map map = [:]
 
         queries?.each { query ->
             def queryStats = stats.getQueryStatistics( query )
@@ -297,7 +302,7 @@ class HibernateMetricsService {
             def x = it.value['(Avg*Count)']
             x ? -x : it.value
         }.collectEntries { k, v ->
-            [ (SqlFormatter.format(k)), v as String ]
+            [ (SqlFormatter.format(k)), v?.toString() ]
         }
     }
 
