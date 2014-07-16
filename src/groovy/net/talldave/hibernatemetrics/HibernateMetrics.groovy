@@ -17,8 +17,12 @@ class HibernateMetrics {
     }
 
 
-    //static void withSqlLogging( List<MetricsType> types = [ALL], Closure c ) {
-    // use varargs - last param should be a closure
+    // withSqlLogging can be called in multiple ways:
+    // HibernateMetrics.withSqlLogging { /* code to have sql logged */ }
+    // HibernateMetrics.withSqlLogging(TIME, SQL) { /* code to have sql logged */ }
+    // HibernateMetrics.withSqlLogging([TIME, SQL]) { /* code to have sql logged */ }
+    // last two examples indicate which metrics to report on, using MetricsType enum
+
     static void withSqlLogging(... params) {
         List types = params as List
         Closure c = types?.pop()
@@ -27,6 +31,10 @@ class HibernateMetrics {
             throw new IllegalArgumentException( "invalid parameters to withSqlLogging $params - expects MetricsType enum values (optional) and closure" )
         }
 
+        withSqlLogging( types, c )
+    }
+
+    static void withSqlLogging(List<MetricsType> types, Closure c) {
         initService()
 
         metricsService.enableMetrics()

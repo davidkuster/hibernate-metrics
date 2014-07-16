@@ -4,6 +4,8 @@ hibernate-metrics
 Grails plugin to report some simple application performance metrics using the Hibernate Statistics API.
 
 
+##Setup
+
 Upon installing the plugin, the following will need to be added to Config.groovy:
 
     // Hibernate Metrics plugin config
@@ -30,6 +32,10 @@ The 'excludeActions' setting will bypass metrics tracking for the specified cont
 'logSqlToConsole' = whether the SQL will be logged to the console as the normal DataSource logSql=true setting operates.  Note that this should probably be set to false for production environments (?)...
 
 
+##Application Integration
+
+It's necessary to include the metrics display in your application's user interface...
+
 Put this somewhere in the UI, typically in a footer or header...
 
     <hibernateMetrics:devEnvControl/>
@@ -55,7 +61,42 @@ This can also be used with these additional tags, to control where the metrics a
     </hibernateMetrics:isEnabled>
 
 
-Details about metrics output:
+##Metrics Reported
+
  - Collections/Entities
    - fetch = loaded from DB
    - load = loaded from DB or cache
+
+TBD
+ - more details
+
+
+##Programmatic Execution
+
+The metrics can be selectively applied to specific blocks of code.  This has primarily been used in the [Grails Console Plugin](http://grails.org/plugin/console) but can be integrated directly into application code.
+
+Note that currently the plugin is not configured to allow for this approach to be turned on or off, so it is not recommended for use in production.
+
+To programmatically examine blocks of code, use the following:
+
+    HibernateMetrics.withSqlLogging {
+        // code to be examined
+    }
+
+Note as well that this can also be called as follows:
+
+    import static net.talldave.hibernatemetrics.MetricsType.*
+
+    HibernateMetrics.withSqlLogging(TIME, SQL) { /* code to have sql logged */ }
+    HibernateMetrics.withSqlLogging([TIME, SQL]) { /* code to have sql logged */ }
+
+The parameters in the last two examples indicate which metrics to report on, by using the MetricsType enum.  The possible enum values are:
+
+    ALL
+    TIME
+    COUNTS
+    SQL
+    DOMAINS
+    QUERY_CACHE
+    SECOND_LEVEL_CACHE
+    SESSIONS
