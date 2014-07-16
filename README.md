@@ -1,5 +1,5 @@
-hibernate-metrics
-=================
+Grails Hibernate Metrics Plugin
+===============================
 
 Grails plugin to report some simple application performance metrics using the Hibernate Statistics API.
 
@@ -106,3 +106,5 @@ The parameters in the last two examples indicate which metrics to report on, by 
     QUERY_CACHE
     SECOND_LEVEL_CACHE
     SESSIONS
+
+Note that ALL is the default if no types are specified.
