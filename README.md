@@ -87,8 +87,14 @@ Note as well that this can also be called as follows:
 
     import static net.talldave.hibernatemetrics.MetricsType.*
 
-    HibernateMetrics.withSqlLogging(TIME, SQL) { /* code to have sql logged */ }
-    HibernateMetrics.withSqlLogging([TIME, SQL]) { /* code to have sql logged */ }
+    HibernateMetrics.withSqlLogging(TIME, SQL) {
+        // code to be examined
+    }
+
+    def metricsTypes = [TIME, COUNTS, SQL, DOMAINS]
+    HibernateMetrics.withSqlLogging(types) {
+        // code to be examined
+    }
 
 The parameters in the last two examples indicate which metrics to report on, by using the MetricsType enum.  The possible enum values are:
 
