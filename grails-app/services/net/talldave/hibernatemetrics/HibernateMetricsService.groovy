@@ -306,6 +306,11 @@ class HibernateMetricsService {
         }
     }
 
+    // TODO: should order queries by execution count first and timestamp second, but
+    // not currently tracking timestamp at all...
+    // or may way second display or queries - one grouped by execution count, and one
+    // in chronological order...
+    // note that sorting is done in SqlLogger.readQueries()
     private def getLoggedQueries() {
         sqlLogger?.readQueries()?.collectEntries { k, v ->
             [ (SqlFormatter.format(k)), ["Execution Count: $v"] ]
