@@ -1,17 +1,20 @@
 package net.talldave.hibernatemetrics.util
 
-import org.hibernate.jdbc.util.BasicFormatterImpl // Hibernate 3.3.2 to pre-4.0
-// use org.hibernate.engine.jdbc.internal.BasicFormatterImpl as of Hibernate 4.0
-
-
 class SqlFormatter {
 
   private static formatter
 
   static getFormatter() {
     if ( ! formatter ) {
-      // TODO: determine how to make this work depending on which version of Hibernate is currently in use
-      formatter = new BasicFormatterImpl()
+      if ( HibernateVersionUtil.isHibernate3() ) {
+        formatter = Class.forName('org.hibernate.jdbc.util.BasicFormatterImpl').newInstance()
+      }
+      else if ( HibernateVersionUtil.isHibernate4() ) {
+        formatter = Class.forName('org.hibernate.engine.jdbc.internal.BasicFormatterImpl').newInstance()
+      }
+      else {
+        throw new UnsupportedOperationException("Unknown Hibernate version")
+      }
     }
     formatter
   }
