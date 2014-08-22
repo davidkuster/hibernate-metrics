@@ -2,6 +2,7 @@ package net.talldave.hibernatemetrics
 
 import net.talldave.hibernatemetrics.util.SqlLogger
 import net.talldave.hibernatemetrics.util.SqlFormatter
+import net.talldave.hibernatemetrics.util.SessionFactoryHelper
 import static net.talldave.hibernatemetrics.MetricsType.*
 
 import grails.util.Holders
@@ -31,20 +32,24 @@ class HibernateMetricsService {
     def sqlLogger
 
 
-
     boolean shouldTrack( controllerName, actionName ) {
-        if ( ! enabled )
+        if ( ! enabled ) {
             return false
+        }
         else {
             def all = excludeActions['*']
             def controller = excludeActions[controllerName]
-            if ( all?.contains( actionName ) || all?.contains('*')
-                || controller?.contains( actionName ) || controller?.contains('*')  )
+            if ( all?.contains( actionName )
+                || all?.contains('*')
+                || controller?.contains( actionName )
+                || controller?.contains('*')  )
             {
                 return false
             }
             else {
-                if ( ! initialized ) enableMetrics()
+                if ( ! initialized ) {
+                    enableMetrics()
+                }
                 return true
             }
         }
@@ -53,9 +58,7 @@ class HibernateMetricsService {
 
 
     void enableMetrics() {
-        sessionFactory.settings.sqlStatementLogger.logToStdout = true
-        sessionFactory.settings.sqlStatementLogger.formatSql = false
-        sessionFactory.statistics.statisticsEnabled = true
+        SessionFactoryHelper.enableStats( sessionFactory )
         enabled = true
         initialized = true
 
@@ -66,8 +69,7 @@ class HibernateMetricsService {
     void disableMetrics() {
         System.out = sqlLogger.underlying
 
-        sessionFactory.settings.sqlStatementLogger.logToStdout = false
-        sessionFactory.statistics.statisticsEnabled = false
+        SessionFactoryHelper.disableStats( sessionFactory )
         enabled = false
     }
 
@@ -121,7 +123,7 @@ class HibernateMetricsService {
 
         Map databaseMetrics
 
-        // necessary to synchronize this? (as per http://stackoverflow.com/questions/8416366/hibernate-profiling)
+        // is it necessary to synchronize this? (as per http://stackoverflow.com/questions/8416366/hibernate-profiling)
         //synchronized (stats) {
         def loggedQueries = getLoggedQueries()
         def queryStats = getQueryStats( stats )
@@ -204,6 +206,7 @@ class HibernateMetricsService {
 
         map.sort()
     }
+
 
     // read collection stats out of the overall hibernate stats obj
     private Map getCollectionStats( stats ) {
