@@ -57,9 +57,15 @@
     /*color: #fff;*/
     /*background-image: -moz-linear-gradient(center top , #555, #111);*/
     /*background-image: -moz-linear-gradient(center top , #999, #555);*/
-    background-image: -moz-linear-gradient(center top , #fff, #eaeaea);
+    /*background-image: -moz-linear-gradient(center top , #fff, #eaeaea);*/
     border-radius: 7px;
     color: #111;
+    background-color: #fff;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eaeaea));
+    background-image: -webkit-linear-gradient(top, #fff, #eaeaea);
+    background-image:    -moz-linear-gradient(top, #fff, #eaeaea);
+    background-image:      -o-linear-gradient(top, #fff, #eaeaea);
+    background-image:         linear-gradient(to bottom, #fff, #eaeaea);
 }
 
 .metricsTitle {
