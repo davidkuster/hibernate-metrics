@@ -1,26 +1,27 @@
 package net.talldave.hibernatemetrics
 
-import net.talldave.hibernatemetrics.util.SqlLogger
-import net.talldave.hibernatemetrics.util.SqlFormatter
-import net.talldave.hibernatemetrics.util.SessionFactoryHelper
 import static net.talldave.hibernatemetrics.MetricsType.*
+import net.talldave.hibernatemetrics.util.SessionFactoryHelper
+import net.talldave.hibernatemetrics.util.SqlFormatter
+import net.talldave.hibernatemetrics.util.SqlLogger
 
-import grails.util.Holders
 import org.hibernate.stat.Statistics
+import org.springframework.beans.factory.InitializingBean
 
-
-class HibernateMetricsService {
+class HibernateMetricsService implements InitializingBean {
 
     static transactional = false
 
+    def grailsApplication
     def sessionFactory
 
-    def config = Holders.config
+    // initialized in afterPropertiesSet
+    def config
 
-    // holding state in a service - bad Dave, bad!
-    boolean enabled = config.grails.plugins.hibernateMetrics.enabled ?: false
-    boolean logToConsole = config.grails.plugins.hibernateMetrics.logSqlToConsole ?: true
-    def excludeActions = [ 'hibernateMetrics':['*'] ] << config.grails.plugins.hibernateMetrics.excludeActions
+    // holding mutable state in a singleton - bad Dave, bad!
+    boolean enabled
+    boolean logToConsole
+    def excludeActions
 
     def initialized
 
@@ -36,23 +37,21 @@ class HibernateMetricsService {
         if ( ! enabled ) {
             return false
         }
-        else {
-            def all = excludeActions['*']
-            def controller = excludeActions[controllerName]
-            if ( all?.contains( actionName )
-                || all?.contains('*')
-                || controller?.contains( actionName )
-                || controller?.contains('*')  )
-            {
-                return false
-            }
-            else {
-                if ( ! initialized ) {
-                    enableMetrics()
-                }
-                return true
-            }
+
+        def all = excludeActions['*']
+        def controller = excludeActions[controllerName]
+        if ( all?.contains( actionName )
+            || all?.contains('*')
+            || controller?.contains( actionName )
+            || controller?.contains('*')  )
+        {
+            return false
         }
+
+        if ( ! initialized ) {
+            enableMetrics()
+        }
+
         true
     }
 
@@ -105,7 +104,7 @@ class HibernateMetricsService {
 
 
     private Map getTimeMetrics() {
-        Map timeMetrics = [
+        [
             (TIME.toString()): [
                 'Total': totalTime,
                 'Controller/Service': actionTime,
@@ -132,7 +131,7 @@ class HibernateMetricsService {
         def collectionStats = getCollectionStats( stats )
         def secondLevelCacheStats = getSecondLevelCacheStats( stats )
 
-        databaseMetrics = [
+        [
             (COUNTS.toString()): [
                 'Queries Executed': stats.queryExecutionCount,
                 'Prepared Statements': stats.prepareStatementCount,
@@ -165,8 +164,6 @@ class HibernateMetricsService {
                 'Closed': stats.sessionCloseCount
             ]
         ]
-        //}
-        databaseMetrics
     }
 
 
@@ -314,19 +311,27 @@ class HibernateMetricsService {
     // or may way second display or queries - one grouped by execution count, and one
     // in chronological order...
     // note that sorting is done in SqlLogger.readQueries()
-    private def getLoggedQueries() {
+    private getLoggedQueries() {
         sqlLogger?.readQueries()?.collectEntries { k, v ->
             [ (SqlFormatter.format(k)), ["Execution Count: $v"] ]
         }
     }
 
-    private def getSlowestQuery( stats ) {
+    private getSlowestQuery( stats ) {
         def slowestQuery = stats.queryExecutionMaxTimeQueryString
         if ( slowestQuery ) {
             [ (SqlFormatter.format(slowestQuery)) :
                 ["Execution Time: ${stats.queryExecutionMaxTime}ms"] ]
         }
         else ''
+    }
+
+    void afterPropertiesSet() {
+        config = grailsApplication.config
+
+        enabled = config.grails.plugins.hibernateMetrics.enabled ?: false
+        logToConsole = config.grails.plugins.hibernateMetrics.logSqlToConsole ?: true
+        excludeActions = [ 'hibernateMetrics':['*'] ] << config.grails.plugins.hibernateMetrics.excludeActions
     }
 
 }

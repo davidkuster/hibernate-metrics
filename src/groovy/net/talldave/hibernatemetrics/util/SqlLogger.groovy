@@ -10,14 +10,14 @@ class SqlLogger extends PrintStream {
     def sql = [:]
 
 
-    public SqlLogger(StringBuilder sb, OutputStream os, PrintStream ul) {
+    SqlLogger(StringBuilder sb, OutputStream os, PrintStream ul) {
         super(os)
         buf = sb
         underlying = ul
     }
 
 
-    public static SqlLogger create(PrintStream toLog, final boolean logToConsole) {
+    static SqlLogger create(PrintStream toLog, final boolean logToConsole) {
         try {
             final StringBuilder sb = new StringBuilder()
             OutputStream psout = toLog.out
@@ -25,7 +25,7 @@ class SqlLogger extends PrintStream {
             return new SqlLogger(
                 sb,
                 new FilterOutputStream(psout) {
-                    public void write(int b) {
+                    void write(int b) {
                         super.write(b)
                         //if ( logToConsole )
                           sb.append((char) b)

@@ -2,19 +2,11 @@ package net.talldave.hibernatemetrics
 
 import static net.talldave.hibernatemetrics.MetricsType.*
 
-import grails.util.Holders
-
 
 class HibernateMetrics {
 
+    // initialized in doWithApplicationContext
     static HibernateMetricsService metricsService
-
-
-    static void initService() {
-        if ( ! metricsService ) {
-            metricsService = Holders.grailsApplication.mainContext.getBean('hibernateMetricsService')
-        }
-    }
 
 
     // withSqlLogging can be called in multiple ways:
@@ -35,7 +27,6 @@ class HibernateMetrics {
     }
 
     static void withSqlLogging(List<MetricsType> types, Closure c) {
-        initService()
 
         metricsService.enableMetrics()
         metricsService.clearStats()

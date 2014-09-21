@@ -22,7 +22,7 @@ class HibernateMetricsController {
     def ajaxClearStats() {
         hibernateMetricsService.clearStats()
         session.metrics = null
-        render( ["success":"true"] as JSON )
+        render( [success: true] as JSON )
     }
 
     // action to enable metrics on the fly
@@ -43,12 +43,12 @@ class HibernateMetricsController {
     // redirect user back to previous URL,
     // unless previous URL is this URL.
     // in that case send to root to avoid loop
-    private def doRedirect( request ) {
+    private void doRedirect( request ) {
         def referer = request.getHeader("Referer")
-        if ( referer?.indexOf( "hibernateMetrics" ) == -1 )
-            redirect( url:referer )
-        else
+        if ( referer?.contains( "hibernateMetrics" ) )
             redirect( uri:"/" )
+        else
+            redirect( url:referer )
     }
 
 }
