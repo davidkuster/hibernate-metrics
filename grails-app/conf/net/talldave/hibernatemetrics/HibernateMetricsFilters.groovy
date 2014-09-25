@@ -22,7 +22,7 @@ class HibernateMetricsFilters {
                 }
             }
 
-            afterView = {
+            afterView = { e ->
                 if ( hibernateMetricsService?.shouldTrack( controllerName, actionName ) ) {
                     hibernateMetricsService.markViewEndTime()
                 }

@@ -1,2 +1,8 @@
-target
-
+/.settings
+/target
+/web-app/WEB-INF
+.DS_Store
+*.log
+/grails-hibernate-metrics-*.zip
+/grails-hibernate-metrics-*.zip.sha1
+/plugin.xml

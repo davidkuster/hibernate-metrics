@@ -1,6 +1,6 @@
 package net.talldave.hibernatemetrics
 
-import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
+import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes as GAA
 import grails.util.Environment
 
 
@@ -23,9 +23,9 @@ class HibernateMetricsTagLib {
     }
 
 
-    private def metricsEnabled() {
-        def controllerName = request.getAttribute(GrailsApplicationAttributes.CONTROLLER_NAME_ATTRIBUTE)
-        def actionName = request.getAttribute(GrailsApplicationAttributes.ACTION_NAME_ATTRIBUTE)
+    private metricsEnabled() {
+        def controllerName = request.getAttribute(GAA.CONTROLLER_NAME_ATTRIBUTE)
+        def actionName = request.getAttribute(GAA.ACTION_NAME_ATTRIBUTE)
         hibernateMetricsService.shouldTrack( controllerName, actionName )
     }
 
@@ -76,7 +76,7 @@ class HibernateMetricsTagLib {
 
 
     def devEnvControl = { attrs ->
-        if ( Environment.current == Environment.DEVELOPMENT ) {
+        if ( Environment.isDevelopmentMode() ) {
             if ( ! metricsEnabled() )
                 out << """Hibernate Metrics
                     [${g.link(controller:"hibernateMetrics", action:"enableMetrics") { "Enable" } }]"""
