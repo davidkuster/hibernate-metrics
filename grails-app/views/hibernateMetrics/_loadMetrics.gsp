@@ -8,23 +8,33 @@
         // TODO: should probably use js apply method & parameterize "on" vs "live"
         var jqueryVersion = $().jquery;
         //console.log( "jquery version = [" + jqueryVersion + "]" );
-        if ( jqueryVersion == "1.8.3" || jqueryVersion == "1.10.2" ) {
-            $("#metrics").on( 'click', '#clearStatsLink', function() { clearStats(); } );
-            $("#metrics").on( 'click', '#refreshMetricsLink', function() { getMetrics(1); } );
-            $("#metrics").on( 'click', '.metricsLink', function(event) {
-                displayMetricsDialog( $(event.target) );
-            } );
-        }
-        else {
+
+        // check old versions of jquery
+        if ( startsWith(jqueryVersion, "1.3")
+                || startsWith(jqueryVersion, "1.4")
+                || startsWith(jqueryVersion, "1.5")
+                || startsWith(jqueryVersion, "1.6") ) {
             $("#clearStatsLink").live( 'click', function() { clearStats(); } );
             $("#refreshMetricsLink").live( 'click', function() { getMetrics(1); } );
             $(".metricsLink").live( 'click', function(event) {
                 displayMetricsDialog( $(event.target) );
             } );
         }
+        // otherwise assume it's 1.7 or newer and supports .on()
+        else {
+            $("#metrics").on( 'click', '#clearStatsLink', function() { clearStats(); } );
+            $("#metrics").on( 'click', '#refreshMetricsLink', function() { getMetrics(1); } );
+            $("#metrics").on( 'click', '.metricsLink', function(event) {
+                displayMetricsDialog( $(event.target) );
+            } );
+        }
 
         getMetrics(0);
     });
+
+    function startsWith(str, s) {
+        return str.slice(0, s.length) == s;
+    }
 
     function getMetrics(loadNum) {
         $.ajax({
