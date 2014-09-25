@@ -120,8 +120,6 @@ class HibernateMetricsService implements InitializingBean {
         //println "loading metrics - collection roles = ${stats.collectionRoleNames}"
         //println "all props = ${stats.properties}\n\n"
 
-        Map databaseMetrics
-
         // is it necessary to synchronize this? (as per http://stackoverflow.com/questions/8416366/hibernate-profiling)
         //synchronized (stats) {
         def loggedQueries = getLoggedQueries()
@@ -140,7 +138,7 @@ class HibernateMetricsService implements InitializingBean {
             ],
             (SQL.toString()): [
                 'Logged to Console': loggedQueries,
-                'Executed': stats.queries as List,
+                //'Executed': stats.queries as List,
                 'Stats': queryStats,
                 'Slowest': slowestQuery
             ],
