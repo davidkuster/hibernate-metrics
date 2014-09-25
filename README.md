@@ -6,13 +6,14 @@ Grails plugin to report some simple application performance metrics using the Hi
 
 ##Setup
 
-Upon installing the plugin, the following will need to be added to Config.groovy:
+Upon installing the plugin, the following additional config options can be added to Config.groovy.
 
-    // Hibernate Metrics plugin config
+The 'excludeActions' setting will bypass metrics tracking for specified controller actions.
+
     grails.plugins.hibernateMetrics.excludeActions = [
       // either controllerName or actionName can be replaced with '*'
-      // 'controllerName':['actionName', 'action2', 'etc']
-      'hibernateMetrics':['*']
+      'controllerName':['actionName', 'action2', 'etc'],
+      'controllerName2':['actionName2', 'etc']
     ]
 
     // enabled at startup
@@ -21,8 +22,6 @@ Upon installing the plugin, the following will need to be added to Config.groovy
     grails.plugins.hibernateMetrics.formatSQL = false
     // write SQL to console like logSql=true normally does
     grails.plugins.hibernateMetrics.logSqlToConsole = true
-
-The 'excludeActions' setting will bypass metrics tracking for the specified controller actions.
 
 'enabled' = whether it should happen at startup
 
