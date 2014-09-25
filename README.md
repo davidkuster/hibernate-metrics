@@ -13,6 +13,8 @@ Note that this plugin is in a very early stage and should be considered experime
     }
 (Where x.y.z is obviously replaced with the desired version of the plugin.)
 
+*Note as well that the plugin supports both Hibernate 3 and 4, but does not include a specific dependency for either.  It is also assumed that some version of jQuery is available.*
+
 
 ##Setup
 
@@ -33,7 +35,7 @@ Upon installing the plugin, the following additional config options can be added
 
 'enabled' - if the plugin should be enabled at application startup.
 
-'logSqlToConsole' - if the SQL should be logged to the console as the normal DataSource logSql=true setting operates.  *(Note that currently this setting is not working as desired. PRs welcome.) :)*
+'logSqlToConsole' - if the SQL should be logged to the console as the normal DataSource logSql=true setting operates.  *(Note that currently this setting is not working as desired if set to false. PRs welcome.) :)*
 
 
 ##Application Integration
@@ -77,16 +79,16 @@ __Database Metrics__
 
 - Counts
 
-  - [Queries Executed](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getQueryExecutionCount(\)) = global number of executed queries
-  - [Prepared Statements](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getPrepareStatementCount(\)) = number of prepared statements that were acquired
-  - [Transactions](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getTransactionCount(\)) = number of transactions we know to have completed
-  - [Flushes](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getFlushCount(\)) = global number of flushes executed by sessions (either implicit or explicit)
+  - [Queries Executed](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getQueryExecutionCount()) = global number of executed queries
+  - [Prepared Statements](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getPrepareStatementCount()) = number of prepared statements that were acquired
+  - [Transactions](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getTransactionCount()) = number of transactions we know to have completed
+  - [Flushes](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getFlushCount()) = global number of flushes executed by sessions (either implicit or explicit)
 
 - SQL
 
   - Logged to Console = the queries logged to the console (ala logSql=true)
   - Query Stats = statistics on individual queries as reported by Hibernate, including number of times executed, max/min/average time taken and number of rows returned
-  - [Slowest Query](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getQueryExecutionMaxTimeQueryString(\)) = query string for the slowest query
+  - [Slowest Query](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getQueryExecutionMaxTimeQueryString()) = query string for the slowest query
 
 - Domains
 
@@ -95,21 +97,21 @@ __Database Metrics__
 
 - Query Cache
 
-  - [Hit](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getQueryCacheHitCount(\)) = global number of cached queries successfully retrieved from cache
-  - [Miss](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getQueryCacheMissCount(\)) = global number of cached queries *not* found in cache
-  - [Put](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getQueryCachePutCount(\)) = global number of cacheable queries put in cache
+  - [Hit](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getQueryCacheHitCount()) = global number of cached queries successfully retrieved from cache
+  - [Miss](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getQueryCacheMissCount()) = global number of cached queries *not* found in cache
+  - [Put](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getQueryCachePutCount()) = global number of cacheable queries put in cache
 
 - 2L Cache
 
-  - [Hit](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getSecondLevelCacheHitCount(\)) = global number of cacheable entities/collections successfully retrieved from cache
-  - [Miss](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getSecondLevelCacheMissCount(\)) = global number of cacheable entities/collections not found in the cache and loaded from the database
-  - [Put](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getSecondLevelCachePutCount(\)) = global number of cacheable entities/collections put in the cache
+  - [Hit](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getSecondLevelCacheHitCount()) = global number of cacheable entities/collections successfully retrieved from cache
+  - [Miss](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getSecondLevelCacheMissCount()) = global number of cacheable entities/collections not found in the cache and loaded from the database
+  - [Put](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getSecondLevelCachePutCount()) = global number of cacheable entities/collections put in the cache
   - Domains = details of domain objects in the cache
 
 - Sessions
 
-  - [Opened](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getSessionOpenCount(\)) = global number of sessions opened
-  - [Closed](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getSessionCloseCount(\)) = global number of sessions closed
+  - [Opened](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getSessionOpenCount()) = global number of sessions opened
+  - [Closed](http://docs.jboss.org/hibernate/orm/3.2/api/org/hibernate/stat/Statistics.html#getSessionCloseCount()) = global number of sessions closed
 
 ##Programmatic Execution
 
