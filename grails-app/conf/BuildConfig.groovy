@@ -26,5 +26,9 @@ grails.project.dependency.resolution = {
         runtime( ":jquery:1.7.1" ) {
             export = false
         }
+
+        runtime( ":hibernate:$grailsVersion" ) {
+            export = false
+        }
     }
 }
