@@ -3,7 +3,7 @@ Grails Hibernate Metrics Plugin
 
 Grails plugin to report some simple application performance metrics using the Hibernate Statistics API.  The plugin was introduced at [GR8Conf US 2014](http://gr8conf.us) - the presentation video is available on [YouTube](https://www.youtube.com/watch?v=_cdb7zYNEFg).
 
-Note that this plugin is in a very early stage and should be considered experimental.  At this point I suggest only including it in a development or test environment.  This can be done by including the plugin in BuildConfig.groovy as follows:
+Note that this plugin is in a very early stage and should be considered experimental.  At this point I suggest only including it in a development or test environment.  This can be done by including the plugin in BuildConfig.groovy as follows. (Where x.y.z is obviously replaced with the desired version of the plugin.)
 
     import grails.util.Environment
 
@@ -11,9 +11,9 @@ Note that this plugin is in a very early stage and should be considered experime
     if (Environment.current != Environment.PRODUCTION) {
         compile ":hibernate-metrics:x.y.z"
     }
-(Where x.y.z is obviously replaced with the desired version of the plugin.)
+**Be advised!  If you exclude the plugin from the production environment you will also need to wrap any taglib calls (such as &lt;hibernateMetrics:metrics&gt;) in a similar block or those will blow up.  In production.  Which would be bad.**
 
-*Note as well that the plugin supports both Hibernate 3 and 4, but does not include a specific dependency for either.  It is also assumed that some version of jQuery is available.*
+*Note as well that the plugin supports both Hibernate 3 and 4, but does not include a specific dependency for either.  It is also assumed that some version of jQuery and jQuery UI is available.*
 
 
 ##Setup
