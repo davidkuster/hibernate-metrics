@@ -119,7 +119,7 @@ In addition to a heads-up display, the metrics tracking can be selectively appli
 
 To programmatically examine blocks of code, use the following:
 
-    import static net.talldave.hibernatemetrics.HibernateMetrics
+    import net.talldave.hibernatemetrics.HibernateMetrics
 
     HibernateMetrics.withSqlLogging {
         // code to be examined
@@ -127,7 +127,7 @@ To programmatically examine blocks of code, use the following:
 
 Note as well that this can also be called as follows:
 
-    import static net.talldave.hibernatemetrics.HibernateMetrics
+    import net.talldave.hibernatemetrics.HibernateMetrics
     import static net.talldave.hibernatemetrics.MetricsType.*
 
     HibernateMetrics.withSqlLogging(TIME, SQL) {
