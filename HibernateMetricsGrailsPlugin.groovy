@@ -2,7 +2,7 @@ import net.talldave.hibernatemetrics.HibernateMetrics
 
 class HibernateMetricsGrailsPlugin {
 
-    def version = '0.1.0'
+    def version = '0.1.1'
     def grailsVersion = '2.0 > *'
     def title = 'Hibernate Metrics'
     def author = 'David Kuster'
