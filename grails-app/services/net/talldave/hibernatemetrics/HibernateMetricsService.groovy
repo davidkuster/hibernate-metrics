@@ -6,6 +6,7 @@ import net.talldave.hibernatemetrics.util.SqlFormatter
 import net.talldave.hibernatemetrics.util.SqlLogger
 
 import org.hibernate.stat.Statistics
+import org.hibernate.cache.CacheException
 import org.springframework.beans.factory.InitializingBean
 
 class HibernateMetricsService implements InitializingBean {
@@ -171,32 +172,41 @@ class HibernateMetricsService implements InitializingBean {
         def regionNames = stats.secondLevelCacheRegionNames
         Map map = [:]
 
-        regionNames?.each { regionName ->
-            def secondLevelStats = stats.getSecondLevelCacheStatistics( regionName )
-            def statList = []
+        regionNames?.findAll { it }?.each { regionName ->
+            try {
+                def secondLevelStats = stats.getSecondLevelCacheStatistics( regionName )
+                def statList = []
 
-            def inMemory = secondLevelStats.elementCountInMemory
-            def onDisk = secondLevelStats.elementCountOnDisk
-            def hitCount = secondLevelStats.hitCount
-            def missCount = secondLevelStats.missCount
-            def putCount = secondLevelStats.putCount
-            def sizeInMemory = secondLevelStats.sizeInMemory
+                def inMemory = secondLevelStats.elementCountInMemory
+                def onDisk = secondLevelStats.elementCountOnDisk
+                def hitCount = secondLevelStats.hitCount
+                def missCount = secondLevelStats.missCount
+                def putCount = secondLevelStats.putCount
+                def sizeInMemory = secondLevelStats.sizeInMemory
 
-            // this blows up when trying to read the Hibernate entries, so don't
-            def entryIds
-            if ( ! regionName.startsWith('org.hibernate') )
-                entryIds = secondLevelStats.entries?.keySet()
+                // this blows up when trying to read the Hibernate entries, so don't
+                def entryIds
+                if ( ! regionName.startsWith('org.hibernate') )
+                    entryIds = secondLevelStats.entries?.keySet()
 
-            if ( inMemory ) statList << "Elements In Memory: $inMemory"
-            if ( onDisk ) statList << "Elements On Disk: $onDisk"
-            if ( hitCount ) statList << "Hits: $hitCount"
-            if ( missCount ) statList << "Miss: $missCount"
-            if ( putCount ) statList << "Put: $putCount"
-            if ( sizeInMemory ) statList << "Memory Size: $sizeInMemory"
-            if ( entryIds ) statList << "IDs: $entryIds"
+                if ( inMemory ) statList << "Elements In Memory: $inMemory"
+                if ( onDisk ) statList << "Elements On Disk: $onDisk"
+                if ( hitCount ) statList << "Hits: $hitCount"
+                if ( missCount ) statList << "Miss: $missCount"
+                if ( putCount ) statList << "Put: $putCount"
+                if ( sizeInMemory ) statList << "Memory Size: $sizeInMemory"
+                if ( entryIds ) statList << "IDs: $entryIds"
 
-            if ( statList )
-                map.put( regionName, statList.flatten() )
+                if ( statList )
+                    map.put( regionName, statList.flatten() )
+            }
+            catch (CacheException e) {
+                // and occasionally blows up when trying to read some other entries too...
+                log.warn( "Could not read second level cache stats for region $regionName: ${e.message}" )
+            }
+            catch (Exception e) {
+                log.error( "Unexpected exception trying to read second level cache stats", e )
+            }
         }
 
         map.sort()
